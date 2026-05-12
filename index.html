@@ -19,25 +19,34 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Empêche le scroll global de la page */
+            overflow: hidden;
         }
 
         header {
-            <header style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-        <img src="logo-eps.png" alt="Logo EPS" style="height: 60px; width: auto; border-radius: 50%;">
-        <div>
-            <h1>Assistant iPack EPS Gamma</h1>
-            <p class="subtitle" style="margin: 0;">Académie d'Aix-Marseille</p>
-        </div>
-    </header>
+            background-color: var(--am-blue);
+            color: white;
+            padding: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
 
-        h1 { margin: 0; font-size: 1.5rem; }
-        .subtitle { opacity: 0.8; margin: 0; font-size: 0.9rem; }
+        header img {
+            height: 55px; /* Taille du logo */
+            width: auto;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        header div { text-align: left; }
+
+        h1 { margin: 0; font-size: 1.4rem; }
+        .subtitle { opacity: 0.8; margin: 0; font-size: 0.85rem; }
 
         .container {
             max-width: 1000px;
-            margin: 0.5rem auto;
+            margin: 0.4rem auto;
             padding: 1rem;
             background: white;
             border-radius: 8px;
@@ -45,24 +54,17 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
             width: 95%;
         }
 
-        .welcome-text {
-            font-size: 0.9rem;
-            margin: 0;
-            text-align: center;
-        }
-
-        /* ZONE DE CHAT AJUSTABLE */
         .chat-section {
-            flex: 1; /* Prend tout l'espace restant sans dépasser */
+            flex: 1;
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
             background: #fff;
-            min-height: 400px; /* Taille minimum pour rester lisible */
+            min-height: 350px;
         }
 
         .grid {
@@ -81,13 +83,14 @@
             border-radius: 4px;
             font-weight: bold;
             font-size: 0.8rem;
+            transition: 0.3s;
         }
 
         .btn:hover { background-color: var(--am-blue); color: white; }
 
         footer {
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.4rem;
             font-size: 0.75rem;
             color: #888;
         }
@@ -96,15 +99,14 @@
 <body>
 
     <header>
-        <h1>Assistant iPack EPS Gamma</h1>
-        <p class="subtitle">Académie d'Aix-Marseille</p>
+        <img src="capture_decran_2025-09-08_191648.png" alt="Logo EPS">
+        <div>
+            <h1>Assistant iPack EPS Gamma</h1>
+            <p class="subtitle">Académie d'Aix-Marseille</p>
+        </div>
     </header>
 
     <div class="container">
-        <p class="welcome-text">
-            <strong>Besoin d'aide ?</strong> Posez votre question sur iPack ou le CCF ci-dessous.
-        </p>
-
         <div class="chat-section">
             <iframe
                 src="https://www.chatbase.co/chatbot-iframe/lkAOJJxel7o6BllVD3_Xo"
@@ -118,12 +120,12 @@
         <div class="grid">
             <a href="#" class="btn">📄 Guide iPack</a>
             <a href="#" class="btn">📄 Protocole CCF</a>
-            <a href="#" class="btn">📄 Tutoriel APPN</a>
+            <a href="#" class="btn) ">📄 Tutoriel APPN</a>
         </div>
     </div>
 
     <footer>
-        &copy; 2024 - Académie d'Aix-Marseille
+        &copy; 2026 - Académie d'Aix-Marseille - Assistant Numérique EPS
     </footer>
 
 </body>
