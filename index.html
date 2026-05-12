@@ -33,14 +33,13 @@
         }
 
         header img {
-            height: 55px; /* Taille du logo */
+            height: 55px;
             width: auto;
             border-radius: 50%;
             border: 2px solid white;
         }
 
         header div { text-align: left; }
-
         h1 { margin: 0; font-size: 1.4rem; }
         .subtitle { opacity: 0.8; margin: 0; font-size: 0.85rem; }
 
@@ -71,10 +70,11 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 0.5rem;
+            margin-top: 5px;
         }
 
         .btn {
-            padding: 0.5rem;
+            padding: 0.6rem;
             text-align: center;
             background: white;
             border: 1.5px solid var(--am-blue);
@@ -84,13 +84,16 @@
             font-weight: bold;
             font-size: 0.8rem;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn:hover { background-color: var(--am-blue); color: white; }
 
         footer {
             text-align: center;
-            padding: 0.4rem;
+            padding: 0.5rem;
             font-size: 0.75rem;
             color: #888;
         }
@@ -120,7 +123,7 @@
         <div class="grid">
             <a href="#" class="btn">📄 Guide iPack</a>
             <a href="#" class="btn">📄 Protocole CCF</a>
-            <a href="#" class="btn) ">📄 Tutoriel APPN</a>
+            <a href="#" class="btn">📄 Tutoriel APPN</a>
         </div>
     </div>
 
