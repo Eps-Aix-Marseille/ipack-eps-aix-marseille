@@ -25,7 +25,7 @@
         header {
             background-color: var(--am-blue);
             color: white;
-            padding: 0.6rem;
+            padding: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -33,68 +33,40 @@
         }
 
         header img {
-            height: 55px;
+            height: 60px;
             width: auto;
             border-radius: 50%;
             border: 2px solid white;
         }
 
         header div { text-align: left; }
-        h1 { margin: 0; font-size: 1.4rem; }
-        .subtitle { opacity: 0.8; margin: 0; font-size: 0.85rem; }
+        h1 { margin: 0; font-size: 1.6rem; }
+        .subtitle { opacity: 0.8; margin: 0; font-size: 0.9rem; }
 
         .container {
             max-width: 1000px;
-            margin: 0.4rem auto;
-            padding: 1rem;
+            margin: 0.8rem auto;
+            padding: 0.5rem;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
             width: 95%;
         }
 
         .chat-section {
             flex: 1;
-            border: 1px solid #ddd;
+            border: none;
             border-radius: 8px;
             overflow: hidden;
-            background: #fff;
-            min-height: 350px;
         }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-top: 5px;
-        }
-
-        .btn {
-            padding: 0.6rem;
-            text-align: center;
-            background: white;
-            border: 1.5px solid var(--am-blue);
-            color: var(--am-blue);
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn:hover { background-color: var(--am-blue); color: white; }
 
         footer {
             text-align: center;
-            padding: 0.5rem;
-            font-size: 0.75rem;
+            padding: 0.6rem;
+            font-size: 0.8rem;
             color: #888;
         }
     </style>
@@ -118,12 +90,6 @@
                 frameborder="0"
                 allow="microphone"
             ></iframe>
-        </div>
-
-        <div class="grid">
-            <a href="#" class="btn">📄 Guide iPack</a>
-            <a href="#" class="btn">📄 Protocole CCF</a>
-            <a href="#" class="btn">📄 Tutoriel APPN</a>
         </div>
     </div>
 
