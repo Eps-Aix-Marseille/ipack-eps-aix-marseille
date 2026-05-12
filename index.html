@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant iPack EPS - Aix-Marseille</title>
+    <title>Assistant iPack EPS Gamma - Académie d'Aix-Marseille</title>
     <style>
         :root {
-            --am-blue: #002060; /* Bleu officiel académique */
+            --am-blue: #002060;
             --am-light-blue: #f0f4f8;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -17,62 +18,74 @@
             color: #333;
             display: flex;
             flex-direction: column;
-            align-items: center;
             min-height: 100vh;
         }
+
         header {
             background-color: var(--am-blue);
             color: white;
-            width: 100%;
-            padding: 20px 0;
+            padding: 2rem 1rem;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+
         .container {
             max-width: 800px;
-            width: 90%;
-            margin: 30px auto;
+            margin: 2rem auto;
+            padding: 2rem;
             background: white;
-            padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            flex: 1;
         }
-        h1 { margin: 0; font-size: 1.8rem; }
-        p { line-height: 1.6; color: #555; }
-        .doc-grid {
+
+        h1 { margin: 0; font-size: 2.2rem; }
+        .subtitle { opacity: 0.8; margin-top: 0.5rem; }
+
+        .card {
+            border: 1px solid #e1e8ed;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 25px;
+            gap: 1rem;
+            margin-top: 2rem;
         }
+
         .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            background-color: white;
+            display: block;
+            padding: 0.8rem;
+            text-align: center;
+            background: white;
             border: 2px solid var(--am-blue);
             color: var(--am-blue);
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: bold;
             transition: all 0.3s;
         }
+
         .btn:hover {
             background-color: var(--am-blue);
             color: white;
             transform: translateY(-2px);
         }
-        /* Pour agrandir la bulle Chatbase */
+
+        /* --- RÉGLAGE FORCE DU BOUTON CHATBASE --- */
         #chatbase-bubble-button {
-            width: 75px !important;
-            height: 75px !important;
+            transform: scale(1.4) !important; /* Agrandit de 40% */
+            transform-origin: bottom right !important;
+            right: 25px !important;
+            bottom: 25px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
         }
-        #chatbase-bubble-window {
-            bottom: 90px !important; /* Pour que la fenêtre s'ouvre au dessus du gros bouton */
-        }
+
         footer {
-            margin-top: auto;
+            text-align: center;
             padding: 20px;
             font-size: 0.9rem;
             color: #888;
@@ -81,37 +94,38 @@
 </head>
 <body>
 
-<header>
-    <h1>Assistant iPack EPS Gamma</h1>
-    <p>Académie d'Aix-Marseille</p>
-</header>
+    <header>
+        <h1>Assistant iPack EPS Gamma</h1>
+        <p class="subtitle">Académie d'Aix-Marseille</p>
+    </header>
 
-<div class="container">
-    <h2>Bienvenue sur votre espace d'assistance</h2>
-    <p>Cet outil est conçu pour vous aider dans la gestion d'iPack, du CCF et de vos projets APPN. Utilisez la bulle de discussion en bas à droite pour poser vos questions à notre IA experte.</p>
-    
-    <div class="doc-grid">
-        <a href="#" class="btn">📄 Guide iPack Gamma</a>
-        <a href="#" class="btn">📄 Protocole CCF EPS</a>
-        <a href="#" class="btn">📄 Tutoriel APPN</a>
+    <div class="container">
+        <div class="card">
+            <h2>Bienvenue sur votre espace d'assistance</h2>
+            <p>Cet outil est conçu pour vous aider dans la gestion d'iPack, du CCF et de vos projets APPN. Utilisez la bulle de discussion en bas à droite pour poser vos questions à notre IA experte.</p>
+        </div>
+
+        <div class="grid">
+            <a href="#" class="btn">📄 Guide iPack Gamma</a>
+            <a href="#" class="btn">📄 Protocole CCF EPS</a>
+            <a href="#" class="btn">📄 Tutoriel APPN</a>
+        </div>
     </div>
-</div>
 
-<footer>
-    © 2024 - Académie d'Aix-Marseille - Assistant intelligent iPack
-</footer>
+    <footer>
+        &copy; 2024 - Académie d'Aix-Marseille - Assistant intelligent iPack
+    </footer>
 
-<script>
-  window.chatbaseConfig = {
-    chatbotId: "lkAOJJxel7o6BllVD3_Xo",
-  }
-</script>
-<script
-  src="https://www.chatbase.co/embed.min.js"
-  id="lkAOJJxel7o6BllVD3_Xo"
-  domain="www.chatbase.co"
-  defer>
-</script>
+    <script>
+        window.chatbaseConfig = {
+            chatbotId: "TON_ID_ICI",
+        }
+    </script>
+    <script
+        src="https://www.chatbase.co/embed.min.js"
+        id="TON_ID_ICI"
+        defer>
+    </script>
 
 </body>
 </html>
