@@ -3,91 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA iPack EPS - Aix-Marseille</title>
+    <title>Assistant iPack EPS - Aix-Marseille</title>
     <style>
-        :root { --am-blue: #002060; --am-gold: #ffcc00; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { background: var(--am-blue); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--am-gold); }
-        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 85%; padding: 15px; border-radius: 15px; line-height: 1.6; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .user { background: var(--am-blue); color: white; align-self: flex-end; }
-        .step-card { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px; border-left: 3px solid var(--am-gold); }
-        .web-info { font-size: 0.85rem; color: #2ecc71; font-weight: bold; margin-top: 10px; display: block; }
-        .input-area { background: white; padding: 20px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 2px solid #eee; outline: none; font-size: 1rem; }
-        button { background: var(--am-blue); color: white; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        :root {
+            --am-blue: #002060; /* Bleu officiel académique */
+            --am-light-blue: #f0f4f8;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--am-light-blue);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: var(--am-blue);
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 1.8rem; }
+        p { line-height: 1.6; color: #555; }
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background-color: white;
+            border: 2px solid var(--am-blue);
+            color: var(--am-blue);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background-color: var(--am-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
     </style>
 </head>
 <body>
 
-<header><strong>ASSISTANT IA iPack EPS</strong><br>Aix-Marseille & Ressources Web</header>
+<header>
+    <h1>Assistant iPack EPS Gamma</h1>
+    <p>Académie d'Aix-Marseille</p>
+</header>
 
-<div id="chat-window">
-    <div class="msg bot">Posez-moi votre question. J'analyse vos documents iPack et je complète par une recherche sur les directives académiques et nationales.</div>
+<div class="container">
+    <h2>Bienvenue sur votre espace d'assistance</h2>
+    <p>Cet outil est conçu pour vous aider dans la gestion d'iPack, du CCF et de vos projets APPN. Utilisez la bulle de discussion en bas à droite pour poser vos questions à notre IA experte.</p>
+    
+    <div class="doc-grid">
+        <a href="#" class="btn">📄 Guide iPack Gamma</a>
+        <a href="#" class="btn">📄 Protocole CCF EPS</a>
+        <a href="#" class="btn">📄 Tutoriel APPN</a>
+    </div>
 </div>
 
-<div class="input-area">
-    <input type="text" id="userInput" placeholder="Ex: Comment mettre 20 à un élève ?" onkeypress="if(event.key=='Enter') process()">
-    <button onclick="process()">ANALYSER</button>
-</div>
+<footer>
+    © 2024 - Académie d'Aix-Marseille - Assistant intelligent iPack
+</footer>
 
 <script>
-    function process() {
-        const input = document.getElementById('userInput');
-        const query = input.value.trim();
-        if (!query) return;
-        addMsg(query, 'user');
-        input.value = '';
-        setTimeout(() => { analyze(query.toLowerCase()); }, 600);
-    }
-
-    function analyze(q) {
-        let r = "";
-        let src = "";
-
-        // --- ANALYSE DE L'INTENTION : LA NOTE ---
-        if (q.includes("note") || q.includes("mettre") || q.includes("évaluer")) {
-            
-            // Distinction 0 vs 20 (Sens de la phrase)
-            if (q.includes(" 0") || q.includes("zéro") || q.includes("inap")) {
-                r = "<b>Alerte Réglementaire (Inaptitude) :</b><br>On ne met jamais 0 pour une inaptitude. <div class='step-card'><b>Guide Pas à Pas :</b><br>1. Menu 'Examens au CCF'<br>2. Onglet 'Gérer les inaptitudes'<br>3. Sélectionner l'élève et valider 'INAP'.</div>";
-                src = "FAQ Aix-Marseille (Page 1) & Eduscol";
-            } 
-            else if (q.includes("20") || q.includes("vingt") || q.includes("max")) {
-                r = "<b>Notation d'Excellence :</b><br>La note de 20/20 est possible en CCF si l'élève valide tous les attendus de la fiche nationale. <div class='step-card'><b>Action iPack :</b><br>1. Allez dans 'Gestion Pédagogique'<br>2. Saisie des notes par classe/groupe<br>3. Enregistrez et verrouillez la période.</div>";
-                src = "Référentiels Nationaux & iPack Gamma";
-            }
-            else {
-                r = "Pour saisir des notes, rendez-vous dans le menu 'Gestion Pédagogique'. Assurez-vous que votre programmation est validée au préalable.";
-                src = "Guide utilisateur iPack";
-            }
-        }
-
-        // --- ANALYSE DE L'INTENTION : APPN ---
-        else if (q.includes("appn") || q.includes("sortie")) {
-            r = "<b>Validation Projet APPN :</b><br>Le dossier doit respecter la circulaire 2017-04-19. <div class='step-card'><b>Pas à pas :</b><br>1. Menu 'Projets et Attestations'<br>2. 'Validation des projets APPN'<br>3. Téléverser le dossier pour l'IPR.</div>";
-            src = "PPT Accompagnement (Diapo 14)";
-        }
-
-        // --- RECHERCHE WEB (Si pas de correspondance précise) ---
-        else {
-            r = "Je n'ai pas trouvé de procédure exacte dans vos fichiers pour '<i>" + q + "</i>'.<br><br><b>Analyse Web (EPS Aix-Marseille) :</b> Pour cette question, la règle académique préconise de vérifier votre paramétrage dans le menu 'Configuration' ou de consulter le portail Esterel.";
-            src = "Moteur de recherche IA EPS";
-        }
-
-        addMsg(r, 'bot', src);
-    }
-
-    function addMsg(t, side, s="") {
-        const div = document.createElement('div');
-        div.className = 'msg ' + side;
-        div.innerHTML = t + (s ? `<span class="web-info">🔍 ${s}</span>` : "");
-        const win = document.getElementById('chat-window');
-        win.appendChild(div);
-        win.scrollTop = win.scrollHeight;
-    }
+  window.chatbaseConfig = {
+    chatbotId: "lkAOJJxel7o6BllVD3_Xo",
+  }
 </script>
+<script
+  src="https://www.chatbase.co/embed.min.js"
+  id="lkAOJJxel7o6BllVD3_Xo"
+  domain="www.chatbase.co"
+  defer>
+</script>
+
 </body>
 </html>
