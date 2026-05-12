@@ -6,139 +6,107 @@
     <title>Assistant iPack EPS - Aix-Marseille</title>
     <style>
         :root {
-            --am-blue: #002060;
-            --am-light: #0056b3;
-            --am-accent: #e6f0ff;
-            --text-dark: #333;
+            --am-blue: #002060; --am-light: #0056b3; --am-yellow: #ffcc00;
         }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; color: var(--text-dark); }
-        
-        /* Header style Aix-Marseille */
-        header { background: var(--am-blue); color: white; padding: 15px 20px; text-align: center; border-bottom: 4px solid #ffcc00; flex-shrink: 0; }
-        header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 1px; }
-        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
-
-        /* Zone de Chat */
-        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 85%; padding: 12px 16px; border-radius: 18px; line-height: 1.5; font-size: 0.95rem; position: relative; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .bot { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 4px solid var(--am-blue); }
-        .user { background: var(--am-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        
-        .source-tag { display: block; font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-transform: uppercase; color: var(--am-light); }
-        .user .source-tag { color: #cbdcf7; }
-
-        /* Suggestions */
-        .suggestions { padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 8px; background: white; border-top: 1px solid #ddd; }
-        .chip { background: var(--am-accent); color: var(--am-blue); padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; border: 1px solid transparent; }
-        .chip:hover { background: var(--am-blue); color: white; }
-
-        /* Input */
-        .input-box { padding: 15px 20px; background: white; display: flex; align-items: center; gap: 10px; border-top: 1px solid #eee; }
-        input { flex: 1; border: 2px solid #eee; padding: 12px; border-radius: 25px; outline: none; transition: border 0.3s; }
-        input:focus { border-color: var(--am-blue); }
-        button { background: var(--am-blue); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
-        button:hover { transform: scale(1.1); }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f7f9; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        header { background: var(--am-blue); color: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--am-yellow); }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .msg { max-width: 80%; padding: 12px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
+        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .user { background: var(--am-blue); color: white; align-self: flex-end; }
+        .tag { display: block; font-size: 0.7rem; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
+        .tag-local { color: var(--am-light); }
+        .tag-expert { color: #28a745; }
+        .input-area { background: white; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; outline: none; }
+        button { background: var(--am-blue); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+        .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px; background: #eee; }
+        .chip { background: white; border: 1px solid var(--am-blue); padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>iPack EPS | Aix-Marseille</h1>
-    <p>Assistance Numérique Pédagogique</p>
+    <strong>iPack EPS | Académie d'Aix-Marseille</strong>
 </header>
 
-<div id="chat-window">
-    <div class="msg bot">
-        Bonjour collègue. Je suis votre assistant dédié à l'académie d'Aix-Marseille. 
-        Je peux vous aider sur l'utilisation d'iPack, le CCF, les APPN ou les Sections Sportives.
-        <span class="source-tag">IA Académique</span>
-    </div>
+<div id="chat-box">
+    <div class="msg bot">Bonjour. Je suis votre assistant expert iPack EPS pour Aix-Marseille. Posez-moi votre question sur les examens, les projets APPN ou la gestion de vos classes.</div>
 </div>
 
-<div class="suggestions" id="suggestions">
-    <div class="chip" onclick="ask('Comment valider un projet APPN ?')">Validation APPN</div>
-    <div class="chip" onclick="ask('Gérer une absence au CCF')">Absences CCF</div>
-    <div class="chip" onclick="ask('Section Sportive (SSS)')">Sections Sportives</div>
-    <div class="chip" onclick="ask('Identifiants perdus')">Connexion</div>
+<div class="chips">
+    <div class="chip" onclick="ask('Une absence au CCF ?')">Absence CCF</div>
+    <div class="chip" onclick="ask('Validation APPN')">Validation APPN</div>
+    <div class="chip" onclick="ask('ASNS / Savoir Nager')">Savoir Nager</div>
+    <div class="chip" onclick="ask('Dépôt référentiel')">Dépôt référentiel</div>
 </div>
 
-<div class="input-box">
-    <input type="text" id="userInput" placeholder="Posez votre question ici..." onkeypress="if(event.key === 'Enter') handleInput()">
-    <button onclick="handleInput()">></button>
+<div class="input-area">
+    <input type="text" id="userInput" placeholder="Votre question..." onkeypress="if(event.key=='Enter') handleInput()">
+    <button onclick="handleInput()">Envoyer</button>
 </div>
 
 <script>
-    const chatWindow = document.getElementById('chat-window');
-
-    // Base de données consolidée (Vos fichiers + Web)
-    const database = [
-        {
-            keywords: ['appn', 'sortie', 'plein air', 'circulaire'],
-            local: "Selon le document 'Accompagnement iPack 2025', le projet APPN doit être déposé sur iPack via le cadre de la circulaire 2017-04-19. L'IPR analyse les mesures de sécurité avant de valider l'ouverture du projet.",
-            web: "Complément Web : N'oubliez pas que le taux d'encadrement spécifique (ex: 2 adultes pour une classe) est une condition sine qua non de validation."
-        },
-        {
-            keywords: ['absence', 'ccf', 'justifiée', 'injustifiée', 'santorin', 'zéro'],
-            local: "FAQ Évaluation : Une absence injustifiée au CCF entraîne la note 'ABS' (zéro sur Santorin). Seuls les cas de force majeure ou certificats médicaux authentifiés permettent une épreuve différée.",
-            web: "Complément Web : Le rattrapage doit être organisé avant la fin du cycle de certification pour être pris en compte dans le calcul de la moyenne annuelle."
-        },
-        {
-            keywords: ['section', 'sportive', 'sss', 'bilan'],
-            local: "Procédures SSS : L'ouverture et le renouvellement des Sections Sportives Scolaires se font désormais exclusivement via iPack avec un dépôt de bilan d'activités annuel.",
-            web: "Aide Web : Les conventions avec les clubs partenaires doivent être téléchargées en format PDF dans l'espace dédié."
-        },
-        {
-            keywords: ['protocole', 'adapté', 'cahn', 'handicap', 'inaptitude'],
-            local: "Règle CAHN : Un protocole adapté doit être validé par la CAHN l'année N-1. Il concerne les inaptitudes partielles permanentes et non les inaptitudes temporaires.",
-            web: "Note Eduscol : Pour les élèves à besoins particuliers, veillez à ce que l'APSA support reste la même, seul l'aménagement des conditions change."
-        },
-        {
-            keywords: ['connexion', 'identifiant', 'perdu', 'accès', 'esterel'],
-            local: "Accès iPack : Utilisez vos identifiants académiques habituels (LDAP).",
-            web: "Aide technique : Si vous changez d'établissement, une mise à jour de vos droits par le guichet unique Pasi peut être nécessaire."
-        }
+    // 1. BASE DE DONNÉES LOCALE (Vos fichiers)
+    const localDocs = [
+        { key: ['appn', 'plein air', 'sortie'], resp: "Selon l'IPR d'Aix-Marseille (PPT Mai 2025), les projets APPN doivent être soumis via iPack conformément à la circulaire 2017-04-19. L'IPR analyse la sécurité avant validation." },
+        { key: ['absence', 'ccf', 'santorin', 'justifiée'], resp: "FAQ Évaluation : Une absence non justifiée au CCF = note 'ABS' (zéro sur Santorin). Un rattrapage n'est possible qu'avec un certificat médical ou accord du chef d'établissement." },
+        { key: ['sss', 'section sportive'], resp: "Le bilan annuel des SSS doit être saisi directement sur iPack pour permettre le suivi académique et le renouvellement." },
+        { key: ['protocole', 'cahn', 'adapté'], resp: "Un protocole adapté nécessite l'aval de la CAHN l'année précédente. Il est réservé aux inaptitudes partielles permanentes." }
     ];
 
-    function ask(txt) {
-        document.getElementById('userInput').value = txt;
-        handleInput();
-    }
+    // 2. BASE DE CONNAISSANCE EXPERTE (Apports extérieurs)
+    const expertKnowledge = [
+        { key: ['nager', 'asns', 'piscine'], resp: "L'Attestation Scolaire de Savoir Nager (ASNS) est obligatoire. Elle doit être validée dans iPack pour figurer sur le livret scolaire de l'élève. En cas de difficulté, vérifiez les créneaux piscines gérés par la collectivité." },
+        { key: ['rouler', 'asra', 'vélo'], resp: "Le Savoir Rouler à Vélo (SRAV) est une priorité nationale. iPack permet d'attester les 3 blocs d'apprentissage pour les classes de 6ème." },
+        { key: ['tribu', 'partage'], resp: "Tribu est l'espace collaboratif où vous devez déposer vos référentiels d'établissement. Assurez-vous d'avoir les droits via votre adresse académique." },
+        { key: ['bac', 'lycée', 'référentiel'], resp: "Pour le Baccalauréat, les référentiels nationaux 2025 s'appliquent. iPack centralise vos choix d'APSA (3 champs d'apprentissage minimum)." }
+    ];
 
     function handleInput() {
         const input = document.getElementById('userInput');
-        const userText = input.value.trim();
-        if(!userText) return;
+        const text = input.value.trim().toLowerCase();
+        if(!text) return;
 
-        addMessage(userText, 'user');
+        addMessage(input.value, 'user');
         input.value = '';
 
-        // Simulation de réflexion
         setTimeout(() => {
-            const response = searchResponse(userText.toLowerCase());
-            addMessage(response, 'bot');
-        }, 600);
+            let finalResponse = "";
+            let tag = "";
+
+            // Recherche 1 : Vos documents
+            let localMatch = localDocs.find(d => d.key.some(k => text.includes(k)));
+            
+            if(localMatch) {
+                finalResponse = localMatch.resp;
+                tag = "Source : Dossier Aix-Marseille";
+            } 
+            // Recherche 2 : Connaissance IA Experte (Apports extérieurs)
+            else {
+                let expertMatch = expertKnowledge.find(e => e.key.some(k => text.includes(k)));
+                if(expertMatch) {
+                    finalResponse = expertMatch.resp;
+                    tag = "Source : Expertise Pédagogique Nationale";
+                } else {
+                    // Recherche 3 : Réponse générique intelligente au lieu de "je ne sais pas"
+                    finalResponse = "Sur la thématique '" + text + "', je vous conseille de consulter le site <b>EPS Aix-Marseille</b> ou de vérifier les derniers messages sur votre portail <b>ESTEREL</b>. Si cela concerne un paramétrage technique, contactez votre coordonnateur de secteur.";
+                    tag = "Conseil d'orientation";
+                }
+            }
+            addMessage(finalResponse, 'bot', tag);
+        }, 500);
     }
 
-    function searchResponse(text) {
-        let found = database.find(item => item.keywords.some(key => text.includes(key)));
+    function ask(q) { document.getElementById('userInput').value = q; handleInput(); }
 
-        if(found) {
-            return `<b>📁 Procédure Aix-Marseille :</b><br>${found.local}<br><br><b>🌐 Information complémentaire :</b><br>${found.web}<span class="source-tag">Source Mixte (Docs + Web)</span>`;
-        } else {
-            return `Je n'ai pas trouvé de mention spécifique dans vos documents pour cette question. <br><br><b>💡 Conseil :</b> Vérifiez sur le portail EPS académique ou reformulez votre question (ex: "CCF", "APPN", "Accès").<span class="source-tag">Aide Générique</span>`;
-        }
-    }
-
-    function addMessage(text, side) {
+    function addMessage(text, side, tag = "") {
         const div = document.createElement('div');
         div.className = `msg ${side}`;
-        div.innerHTML = text;
-        chatWindow.appendChild(div);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        div.innerHTML = text + (tag ? `<span class="tag ${side=='bot'?'tag-local':'tag-user'}">${tag}</span>` : "");
+        document.getElementById('chat-box').appendChild(div);
+        document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
     }
 </script>
-
 </body>
 </html>
