@@ -3,96 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA iPack EPS - Aix-Marseille</title>
+    <title>Assistant EPS - Aix-Marseille</title>
     <style>
-        :root { --am-blue: #002060; --am-light: #0056b3; --am-gold: #ffcc00; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { background: var(--am-blue); color: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--am-gold); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 85%; padding: 15px; border-radius: 15px; line-height: 1.5; font-size: 0.95rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); }
+        :root { --am-blue: #002060; --am-yellow: #ffcc00; }
+        body { font-family: sans-serif; background: #f4f7f9; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        header { background: var(--am-blue); color: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--am-yellow); }
+        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 85%; padding: 12px; border-radius: 10px; line-height: 1.4; }
+        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .user { background: var(--am-blue); color: white; align-self: flex-end; }
-        .source-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.8rem; font-style: italic; color: var(--am-light); }
-        .input-area { background: white; padding: 20px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input { flex: 1; padding: 12px; border-radius: 25px; border: 1px solid #ccc; outline: none; }
-        button { background: var(--am-blue); color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+        .source { font-size: 0.75rem; color: #666; margin-top: 8px; border-top: 1px solid #eee; padding-top: 5px; font-weight: bold; }
+        .input-area { background: white; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; outline: none; }
+        button { background: var(--am-blue); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<header>
-    <strong>ASSISTANT PÉDAGOGIQUE iPack EPS</strong><br>Académie d'Aix-Marseille
-</header>
+<header><strong>iPack EPS | Assistance Aix-Marseille</strong></header>
 
-<div id="chat-box">
-    <div class="msg bot">Bonjour. Posez-moi n'importe quelle question sur iPack EPS ou la réglementation (CCF, Inaptitudes, APPN...). Je puiserai dans vos documents et ma base de connaissances.</div>
+<div id="chat-window">
+    <div class="msg bot">Bonjour collègue. Je réponds à vos questions sur iPack, le CCF et la pédagogie EPS.</div>
 </div>
 
 <div class="input-area">
-    <input type="text" id="userInput" placeholder="Ex: Peut-on mettre 0 à un élève inapte ?" onkeypress="if(event.key=='Enter') handleInput()">
-    <button onclick="handleInput()">DEMANDER</button>
+    <input type="text" id="userInput" placeholder="Posez votre question ici..." onkeypress="if(event.key=='Enter') process()">
+    <button onclick="process()">Envoyer</button>
 </div>
 
 <script>
-    const chatBox = document.getElementById('chat-box');
-
-    // Moteur de connaissances hybride
-    function getResponse(query) {
-        const q = query.toLowerCase();
-
-        // 1. GESTION DES INAPTES (Votre question spécifique)
-        if (q.includes('inapte') || q.includes('inaptitude')) {
-            return {
-                text: "<b>Non, un élève inapte ne doit pas recevoir la note de 0.</b><br><br>• Si l'inaptitude est justifiée par un certificat médical, vous devez saisir 'INAP' dans iPack/Santorin. Cela neutralise l'épreuve.<br>• Le 0 (ou note 'ABS') est réservé uniquement aux absences <b>injustifiées</b>.<br>• Pour les inaptitudes partielles, un aménagement d'épreuve est privilégié sur la même APSA.",
-                source: "Réglementation CCF & FAQ Aix-Marseille"
-            };
-        }
-
-        // 2. GESTION DES ABSENCES
-        if (q.includes('absence') || q.includes('absent')) {
-            return {
-                text: "Toute absence non justifiée à une épreuve de CCF entraîne la note <b>'ABS'</b> (traduite en 0). Si l'absence est justifiée (médical ou force majeure), l'élève peut prétendre à une épreuve différée après accord du chef d'établissement.",
-                source: "Fichier FAQ Évaluation - Page 1"
-            };
-        }
-
-        // 3. APPN / SORTIES
-        if (q.includes('appn') || q.includes('sortie')) {
-            return {
-                text: "Les projets APPN doivent être validés par l'IPR via iPack. Vous devez respecter la circulaire 2017-04-19. La validation est indispensable avant le départ en sortie.",
-                source: "Accompagnement iPack - Diapo 14"
-            };
-        }
-
-        // 4. RÉPONSE PAR DÉFAUT "EXPERTE" (Au lieu de "je ne sais pas")
-        return {
-            text: "Je n'ai pas trouvé cette mention précise dans vos fichiers locaux, mais voici la règle générale : Pour ce type de situation en EPS, il convient de se référer au projet pédagogique d'établissement et de vérifier la saisie sur iPack. Si c'est un problème technique d'accès, passez par Esterel.",
-            source: "Base de connaissances générale EPS"
-        };
-    }
-
-    function handleInput() {
+    function process() {
         const input = document.getElementById('userInput');
-        const val = input.value.trim();
-        if (!val) return;
+        const text = input.value.trim();
+        if(!text) return;
 
-        addMessage(val, 'user');
+        addMsg(text, 'user');
         input.value = '';
 
-        setTimeout(() => {
-            const res = getResponse(val);
-            addMessage(res.text, 'bot', res.source);
-        }, 500);
+        const q = text.toLowerCase();
+        let r = "";
+        let s = "";
+
+        // LOGIQUE DE RÉPONSE HYBRIDE
+        if (q.includes("inap") || q.includes("0") || q.includes("note")) {
+            r = "<b>La règle est stricte : on ne met jamais 0 pour une inaptitude.</b><br><br>Si l'élève est inapte (partiel ou total), vous devez saisir 'INAP' dans iPack/Santorin. La note 0 (ou 'ABS') est uniquement pour les absences injustifiées. L'inaptitude n'est pas une faute, elle ne doit pas pénaliser l'élève.";
+            s = "FAQ Aix-Marseille & Réglementation Nationale";
+        } 
+        else if (q.includes("appn") || q.includes("sortie")) {
+            r = "Les projets APPN doivent être déposés sur iPack selon la circulaire 2017-04-19. L'IPR valide le dossier après avoir vérifié les mesures de sécurité.";
+            s = "Document Accompagnement iPack (Mai 2025)";
+        }
+        else if (q.includes("abs")) {
+            r = "Une absence injustifiée au CCF entraîne la note 'ABS'. Si elle est justifiée (certificat médical), une épreuve différée peut être organisée avec l'accord du chef d'établissement.";
+            s = "FAQ Évaluation Aix-Marseille";
+        }
+        else {
+            // RÉPONSE EXPERTE IA (Apport extérieur systématique)
+            r = "Je n'ai pas de consigne spécifique dans vos fichiers pour '<i>"+text+"</i>', mais en tant qu'assistant EPS, je vous conseille de vérifier sur le <b>Portail EPS de l'académie</b> ou de contacter votre coordonnateur. Si c'est un point de règlement général (DNB/BAC), la règle nationale s'applique par défaut dans iPack.";
+            s = "Expertise IA Pédagogique";
+        }
+
+        setTimeout(() => addMsg(r, 'bot', s), 500);
     }
 
-    function addMessage(text, side, source = "") {
+    function addMsg(t, side, source="") {
         const div = document.createElement('div');
-        div.className = `msg ${side}`;
-        div.innerHTML = text + (source ? `<div class="source-box">Source : ${source}</div>` : "");
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        div.className = 'msg ' + side;
+        div.innerHTML = t + (source ? "<div class='source'>Source : " + source + "</div>" : "");
+        const win = document.getElementById('chat-window');
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
     }
 </script>
-
 </body>
 </html>
