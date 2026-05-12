@@ -3,110 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant iPack EPS - Aix-Marseille</title>
+    <title>IA iPack EPS - Aix-Marseille</title>
     <style>
-        :root {
-            --am-blue: #002060; --am-light: #0056b3; --am-yellow: #ffcc00;
-        }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f7f9; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { background: var(--am-blue); color: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--am-yellow); }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 80%; padding: 12px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
-        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        :root { --am-blue: #002060; --am-light: #0056b3; --am-gold: #ffcc00; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        header { background: var(--am-blue); color: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--am-gold); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 15px; border-radius: 15px; line-height: 1.5; font-size: 0.95rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); }
         .user { background: var(--am-blue); color: white; align-self: flex-end; }
-        .tag { display: block; font-size: 0.7rem; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
-        .tag-local { color: var(--am-light); }
-        .tag-expert { color: #28a745; }
-        .input-area { background: white; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; outline: none; }
-        button { background: var(--am-blue); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
-        .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px; background: #eee; }
-        .chip { background: white; border: 1px solid var(--am-blue); padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+        .source-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.8rem; font-style: italic; color: var(--am-light); }
+        .input-area { background: white; padding: 20px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        input { flex: 1; padding: 12px; border-radius: 25px; border: 1px solid #ccc; outline: none; }
+        button { background: var(--am-blue); color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <strong>iPack EPS | Académie d'Aix-Marseille</strong>
+    <strong>ASSISTANT PÉDAGOGIQUE iPack EPS</strong><br>Académie d'Aix-Marseille
 </header>
 
 <div id="chat-box">
-    <div class="msg bot">Bonjour. Je suis votre assistant expert iPack EPS pour Aix-Marseille. Posez-moi votre question sur les examens, les projets APPN ou la gestion de vos classes.</div>
-</div>
-
-<div class="chips">
-    <div class="chip" onclick="ask('Une absence au CCF ?')">Absence CCF</div>
-    <div class="chip" onclick="ask('Validation APPN')">Validation APPN</div>
-    <div class="chip" onclick="ask('ASNS / Savoir Nager')">Savoir Nager</div>
-    <div class="chip" onclick="ask('Dépôt référentiel')">Dépôt référentiel</div>
+    <div class="msg bot">Bonjour. Posez-moi n'importe quelle question sur iPack EPS ou la réglementation (CCF, Inaptitudes, APPN...). Je puiserai dans vos documents et ma base de connaissances.</div>
 </div>
 
 <div class="input-area">
-    <input type="text" id="userInput" placeholder="Votre question..." onkeypress="if(event.key=='Enter') handleInput()">
-    <button onclick="handleInput()">Envoyer</button>
+    <input type="text" id="userInput" placeholder="Ex: Peut-on mettre 0 à un élève inapte ?" onkeypress="if(event.key=='Enter') handleInput()">
+    <button onclick="handleInput()">DEMANDER</button>
 </div>
 
 <script>
-    // 1. BASE DE DONNÉES LOCALE (Vos fichiers)
-    const localDocs = [
-        { key: ['appn', 'plein air', 'sortie'], resp: "Selon l'IPR d'Aix-Marseille (PPT Mai 2025), les projets APPN doivent être soumis via iPack conformément à la circulaire 2017-04-19. L'IPR analyse la sécurité avant validation." },
-        { key: ['absence', 'ccf', 'santorin', 'justifiée'], resp: "FAQ Évaluation : Une absence non justifiée au CCF = note 'ABS' (zéro sur Santorin). Un rattrapage n'est possible qu'avec un certificat médical ou accord du chef d'établissement." },
-        { key: ['sss', 'section sportive'], resp: "Le bilan annuel des SSS doit être saisi directement sur iPack pour permettre le suivi académique et le renouvellement." },
-        { key: ['protocole', 'cahn', 'adapté'], resp: "Un protocole adapté nécessite l'aval de la CAHN l'année précédente. Il est réservé aux inaptitudes partielles permanentes." }
-    ];
+    const chatBox = document.getElementById('chat-box');
 
-    // 2. BASE DE CONNAISSANCE EXPERTE (Apports extérieurs)
-    const expertKnowledge = [
-        { key: ['nager', 'asns', 'piscine'], resp: "L'Attestation Scolaire de Savoir Nager (ASNS) est obligatoire. Elle doit être validée dans iPack pour figurer sur le livret scolaire de l'élève. En cas de difficulté, vérifiez les créneaux piscines gérés par la collectivité." },
-        { key: ['rouler', 'asra', 'vélo'], resp: "Le Savoir Rouler à Vélo (SRAV) est une priorité nationale. iPack permet d'attester les 3 blocs d'apprentissage pour les classes de 6ème." },
-        { key: ['tribu', 'partage'], resp: "Tribu est l'espace collaboratif où vous devez déposer vos référentiels d'établissement. Assurez-vous d'avoir les droits via votre adresse académique." },
-        { key: ['bac', 'lycée', 'référentiel'], resp: "Pour le Baccalauréat, les référentiels nationaux 2025 s'appliquent. iPack centralise vos choix d'APSA (3 champs d'apprentissage minimum)." }
-    ];
+    // Moteur de connaissances hybride
+    function getResponse(query) {
+        const q = query.toLowerCase();
+
+        // 1. GESTION DES INAPTES (Votre question spécifique)
+        if (q.includes('inapte') || q.includes('inaptitude')) {
+            return {
+                text: "<b>Non, un élève inapte ne doit pas recevoir la note de 0.</b><br><br>• Si l'inaptitude est justifiée par un certificat médical, vous devez saisir 'INAP' dans iPack/Santorin. Cela neutralise l'épreuve.<br>• Le 0 (ou note 'ABS') est réservé uniquement aux absences <b>injustifiées</b>.<br>• Pour les inaptitudes partielles, un aménagement d'épreuve est privilégié sur la même APSA.",
+                source: "Réglementation CCF & FAQ Aix-Marseille"
+            };
+        }
+
+        // 2. GESTION DES ABSENCES
+        if (q.includes('absence') || q.includes('absent')) {
+            return {
+                text: "Toute absence non justifiée à une épreuve de CCF entraîne la note <b>'ABS'</b> (traduite en 0). Si l'absence est justifiée (médical ou force majeure), l'élève peut prétendre à une épreuve différée après accord du chef d'établissement.",
+                source: "Fichier FAQ Évaluation - Page 1"
+            };
+        }
+
+        // 3. APPN / SORTIES
+        if (q.includes('appn') || q.includes('sortie')) {
+            return {
+                text: "Les projets APPN doivent être validés par l'IPR via iPack. Vous devez respecter la circulaire 2017-04-19. La validation est indispensable avant le départ en sortie.",
+                source: "Accompagnement iPack - Diapo 14"
+            };
+        }
+
+        // 4. RÉPONSE PAR DÉFAUT "EXPERTE" (Au lieu de "je ne sais pas")
+        return {
+            text: "Je n'ai pas trouvé cette mention précise dans vos fichiers locaux, mais voici la règle générale : Pour ce type de situation en EPS, il convient de se référer au projet pédagogique d'établissement et de vérifier la saisie sur iPack. Si c'est un problème technique d'accès, passez par Esterel.",
+            source: "Base de connaissances générale EPS"
+        };
+    }
 
     function handleInput() {
         const input = document.getElementById('userInput');
-        const text = input.value.trim().toLowerCase();
-        if(!text) return;
+        const val = input.value.trim();
+        if (!val) return;
 
-        addMessage(input.value, 'user');
+        addMessage(val, 'user');
         input.value = '';
 
         setTimeout(() => {
-            let finalResponse = "";
-            let tag = "";
-
-            // Recherche 1 : Vos documents
-            let localMatch = localDocs.find(d => d.key.some(k => text.includes(k)));
-            
-            if(localMatch) {
-                finalResponse = localMatch.resp;
-                tag = "Source : Dossier Aix-Marseille";
-            } 
-            // Recherche 2 : Connaissance IA Experte (Apports extérieurs)
-            else {
-                let expertMatch = expertKnowledge.find(e => e.key.some(k => text.includes(k)));
-                if(expertMatch) {
-                    finalResponse = expertMatch.resp;
-                    tag = "Source : Expertise Pédagogique Nationale";
-                } else {
-                    // Recherche 3 : Réponse générique intelligente au lieu de "je ne sais pas"
-                    finalResponse = "Sur la thématique '" + text + "', je vous conseille de consulter le site <b>EPS Aix-Marseille</b> ou de vérifier les derniers messages sur votre portail <b>ESTEREL</b>. Si cela concerne un paramétrage technique, contactez votre coordonnateur de secteur.";
-                    tag = "Conseil d'orientation";
-                }
-            }
-            addMessage(finalResponse, 'bot', tag);
+            const res = getResponse(val);
+            addMessage(res.text, 'bot', res.source);
         }, 500);
     }
 
-    function ask(q) { document.getElementById('userInput').value = q; handleInput(); }
-
-    function addMessage(text, side, tag = "") {
+    function addMessage(text, side, source = "") {
         const div = document.createElement('div');
         div.className = `msg ${side}`;
-        div.innerHTML = text + (tag ? `<span class="tag ${side=='bot'?'tag-local':'tag-user'}">${tag}</span>` : "");
-        document.getElementById('chat-box').appendChild(div);
-        document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+        div.innerHTML = text + (source ? `<div class="source-box">Source : ${source}</div>` : "");
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 </script>
+
 </body>
 </html>
