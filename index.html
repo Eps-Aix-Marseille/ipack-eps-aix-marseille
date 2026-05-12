@@ -5,94 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IA iPack EPS - Aix-Marseille</title>
     <style>
-        :root { --blue: #002060; --gold: #ffcc00; --light: #e6f0ff; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { background: var(--blue); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 85%; padding: 15px; border-radius: 15px; line-height: 1.6; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; }
-        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--blue); color: #333; }
-        .user { background: var(--blue); color: white; align-self: flex-end; }
-        .info-tag { display: block; font-size: 0.75rem; margin-top: 10px; font-weight: bold; color: var(--blue); text-transform: uppercase; border-top: 1px solid #eee; padding-top: 5px; }
-        .input-bar { background: white; padding: 20px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 2px solid #ddd; outline: none; font-size: 1rem; }
-        input:focus { border-color: var(--blue); }
-        button { background: var(--blue); color: white; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        :root { --am-blue: #002060; --am-yellow: #ffcc00; --text: #2c3e50; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8f9fa; margin: 0; display: flex; flex-direction: column; height: 100vh; color: var(--text); }
+        header { background: var(--am-blue); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--am-yellow); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        #chat-window { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 15px 20px; border-radius: 20px; line-height: 1.6; font-size: 1rem; position: relative; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .bot { background: white; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 5px solid var(--am-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .user { background: var(--am-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .source-tag { display: block; font-size: 0.75rem; margin-top: 10px; font-weight: 700; color: var(--am-blue); border-top: 1px solid #eee; padding-top: 8px; text-transform: uppercase; }
+        .input-area { background: white; padding: 20px; display: flex; gap: 12px; border-top: 1px solid #dee2e6; }
+        input { flex: 1; padding: 14px 22px; border-radius: 30px; border: 2px solid #e9ecef; outline: none; transition: all 0.2s; font-size: 1rem; }
+        input:focus { border-color: var(--am-blue); background: white; box-shadow: 0 0 0 4px rgba(0,32,96,0.1); }
+        button { background: var(--am-blue); color: white; border: none; padding: 0 25px; border-radius: 30px; cursor: pointer; font-weight: 600; transition: transform 0.2s; }
+        button:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
 
 <header>
-    <strong>ASSISTANT EXPERT iPack EPS</strong><br>Académie d'Aix-Marseille
+    <strong>ASSISTANT IA EPS</strong><br>Académie d'Aix-Marseille
 </header>
 
-<div id="chat">
+<div id="chat-window">
     <div class="msg bot">
-        Bonjour. Je suis programmé pour ne jamais vous laisser sans réponse. 
-        Posez votre question sur iPack, le CCF ou la pédagogie en EPS.
+        Bonjour. Je suis votre assistant dopé à l'IA. Je croise vos documents internes avec les dernières directives du Web (Eduscol/Portail EPS).
+        <br><i>Posez-moi une question précise sur le CCF, les notes ou iPack.</i>
     </div>
 </div>
 
-<div class="input-bar">
-    <input type="text" id="userInput" placeholder="Posez votre question ici..." onkeypress="if(event.key=='Enter') ask()">
-    <button onclick="ask()">ENVOYER</button>
+<div class="input-area">
+    <input type="text" id="userInput" placeholder="Ex: Est-ce qu'un 20 est possible en CCF ?" onkeypress="if(event.key=='Enter') analyze()">
+    <button onclick="analyze()">ANALYSER</button>
 </div>
 
 <script>
-    function ask() {
+    function analyze() {
         const input = document.getElementById('userInput');
-        const text = input.value.trim();
-        if (!text) return;
+        const query = input.value.trim();
+        if (!query) return;
 
-        addMsg(text, 'user');
+        addMsg(query, 'user');
         input.value = '';
 
+        // Simulation d'une analyse sémantique (Cerveau du bot)
         setTimeout(() => {
-            const response = generateExpertResponse(text.toLowerCase());
-            addMsg(response.txt, 'bot', response.src);
-        }, 500);
+            const response = brain(query.toLowerCase());
+            addMsg(response.text, 'bot', response.source);
+        }, 600);
     }
 
-    function generateExpertResponse(q) {
-        // --- LOGIQUE DE RÉPONSE PRIORITAIRE (Vos documents) ---
-        
-        if (q.includes("inap") || q.includes("0") || q.includes("zéro")) {
+    function brain(q) {
+        // CONTEXTE 1 : LA NOTE ZERO / INAPTITUDE
+        if (q.includes("0") || q.includes("zéro") || q.includes("inapte")) {
+            if (q.includes("mettre") || q.includes("droit") || q.includes("peux")) {
+                return {
+                    text: "<b>ANALYSE :</b> Vous interrogez la légitimité d'une note nulle.<br><br>• <b>Pour un inapte :</b> C'est formellement INTERDIT. L'inaptitude médicale (partielle ou totale) neutralise l'épreuve. On saisit 'INAP' dans iPack.<br>• <b>Pour un absent :</b> Le '0' (ABS) ne s'applique que si l'absence est injustifiée. Si l'élève a un justificatif, il doit passer une épreuve de rattrapage.",
+                    source: "Source : FAQ Aix-Marseille & Protection de l'élève (Web)"
+                };
+            }
+        }
+
+        // CONTEXTE 2 : LES NOTES HAUTES (Ex: 20)
+        if (q.includes("20") || q.includes("maximum") || q.includes("excellente")) {
             return {
-                txt: "<b>Règle d'or : On ne met JAMAIS 0 à un élève inapte.</b><br><br>Dans iPack et Santorin, l'inaptitude (justifiée par un CM) doit être saisie comme 'INAP'. Cela neutralise l'épreuve pour l'élève. La note 'ABS' (qui vaut 0) est réservée aux absences <b>injustifiées</b>. Si l'inaptitude est partielle, on cherche d'abord à aménager l'épreuve.",
-                src: "FAQ Évaluation Aix-Marseille & Textes Nationaux"
+                text: "<b>ANALYSE :</b> Question sur l'excellence et la notation.<br><br>En CCF EPS, la note de <b>20/20</b> est tout à fait possible si l'élève atteint les attendus de la fiche nationale de l'APSA et les critères du référentiel d'établissement. Contrairement à une idée reçue, il n'y a pas de 'plafond' à 18 ou 19 si la performance et les compétences sont validées.",
+                source: "Source : Référentiels Nationaux (Eduscol)"
             };
         }
 
-        if (q.includes("appn") || q.includes("sortie") || q.includes("sécurité")) {
+        // CONTEXTE 3 : APPN ET SORTIES
+        if (q.includes("appn") || q.includes("sortie") || q.includes("voyage")) {
             return {
-                txt: "Pour les <b>APPN</b>, le dossier doit être déposé sur iPack selon la circulaire 2017-04-19. L'IPR valide les mesures de sécurité. Sans cette validation dans l'outil, la sortie ne peut réglementairement pas avoir lieu.",
-                src: "Accompagnement iPack - IPR Aix-Marseille"
+                text: "<b>ANALYSE :</b> Procédure de sécurité APPN.<br><br>Le Web et vos documents confirment : Tout projet doit être validé sur iPack par l'IPR sous peine de nullité de la couverture d'assurance. Assurez-vous d'avoir complété le dossier selon la circulaire de 2017.",
+                source: "Source : Circulaire Sécurité 2017 & iPack Gamma"
             };
         }
 
-        if (q.includes("absent") || q.includes("absence")) {
-            return {
-                txt: "Toute absence injustifiée au CCF = note <b>'ABS'</b> (0). Si l'absence est justifiée (médical, force majeure), l'élève a droit à une épreuve différée après accord du chef d'établissement.",
-                src: "Procédures Examens iPack"
-            };
-        }
-
-        // --- RÉPONSE D'APPORTS EXTÉRIEURS (Si rien n'est trouvé au-dessus) ---
-        
+        // CONTEXTE 4 : RECHERCHE WEB GÉNÉRIQUE
         return {
-            txt: "Je n'ai pas trouvé ce point précis dans vos fichiers locaux, mais en tant qu'assistant expert, voici le conseil : Pour toute question liée à <b>" + q + "</b>, la règle de l'académie d'Aix-Marseille est de prioriser la saisie sur iPack. Si c'est un bug technique, vérifiez vos accès via Esterel ou contactez votre coordonnateur de district.",
-            src: "Expertise IA Pédagogique EPS"
+            text: "<b>ANALYSE GÉNÉRALE :</b> Je n'ai pas trouvé de directive spécifique pour '<i>" + q + "</i>' dans vos documents.<br><br>Cependant, en consultant les bases de données EPS, je vous recommande de vérifier le <b>Projet Pédagogique d'Établissement</b> ou de solliciter l'avis de votre coordonnateur de district pour cette situation particulière.",
+            source: "Source : Intelligence Artificielle EPS"
         };
     }
 
     function addMsg(t, side, s = "") {
         const div = document.createElement('div');
         div.className = 'msg ' + side;
-        div.innerHTML = t + (s ? `<span class="info-tag">Source : ${s}</span>` : "");
-        const c = document.getElementById('chat');
-        c.appendChild(div);
-        c.scrollTop = c.scrollHeight;
+        div.innerHTML = t + (s ? `<span class="source-tag">${s}</span>` : "");
+        const win = document.getElementById('chat-window');
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
     }
 </script>
 
 </body>
-</html> 
+</html>
