@@ -7,14 +7,16 @@
     <style>
         :root {
             --am-blue: #002060;
-            --am-light-blue: #f0f4f8;
+            /* Un bleu très doux pour le fond de page */
+            --am-soft-bg: #eef2f7; 
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--am-light-blue);
+            /* Dégradé léger pour casser le côté "hôpital" du blanc pur */
+            background: linear-gradient(180deg, #dae2ed 0%, #f0f4f8 100%);
             color: #333;
             height: 100vh;
             display: flex;
@@ -29,6 +31,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 10;
         }
 
         .logo-academie {
@@ -51,34 +55,39 @@
             flex-grow: 1;
         }
 
-        h1 { margin: 0; font-size: 1.6rem; letter-spacing: 1px; }
+        h1 { margin: 0; font-size: 1.6rem; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
         .subtitle { opacity: 0.9; margin: 0; font-size: 0.9rem; font-weight: 300; }
 
         .container {
             max-width: 1100px;
             margin: 0.8rem auto;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 8px;
+            /* Fond légèrement bleuté pour le cadre */
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(5px); /* Effet verre dépoli */
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,32,96,0.1);
             flex: 1;
             display: flex;
             flex-direction: column;
             width: 95%;
+            border: 1px solid rgba(255,255,255,0.8);
         }
 
         .chat-section {
             flex: 1;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
+            background: white;
         }
 
         footer {
             text-align: center;
             padding: 0.6rem;
             font-size: 0.8rem;
-            color: #888;
+            color: #5d6d7e;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -86,12 +95,10 @@
 
     <header>
         <img src="logo%20AM.png" alt="Académie d'Aix-Marseille" class="logo-academie">
-        
         <div class="titles">
             <h1>Assistant iPack EPS</h1>
             <p class="subtitle">Rectorat d'Aix-Marseille</p>
         </div>
-
         <img src="capture_decran_2025-09-08_191648.png" alt="Logo EPS" class="logo-eps">
     </header>
 
