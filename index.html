@@ -3,93 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot iPack EPS - Aix-Marseille</title>
+    <title>Assistant iPack EPS - Aix-Marseille</title>
     <style>
         :root {
-            --am-blue: #002060; /* Bleu institutionnel Aix-Marseille */
-            --am-light-blue: #0056b3;
-            --bg-gray: #f4f7f9;
+            --am-blue: #002060;
+            --am-light: #0056b3;
+            --am-accent: #e6f0ff;
+            --text-dark: #333;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-gray); margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { background: var(--am-blue); color: white; padding: 1rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; color: var(--text-dark); }
         
-        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .message { max-width: 80%; padding: 12px 16px; border-radius: 15px; line-height: 1.4; }
-        .bot { background: white; align-self: flex-start; border-left: 5px solid var(--am-blue); box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
-        .user { background: var(--am-light-blue); color: white; align-self: flex-end; }
+        /* Header style Aix-Marseille */
+        header { background: var(--am-blue); color: white; padding: 15px 20px; text-align: center; border-bottom: 4px solid #ffcc00; flex-shrink: 0; }
+        header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 1px; }
+        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
 
-        .suggestions { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 20px; background: #e9ecef; }
-        .chip { background: white; border: 1px solid var(--am-blue); color: var(--am-blue); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
+        /* Zone de Chat */
+        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 12px 16px; border-radius: 18px; line-height: 1.5; font-size: 0.95rem; position: relative; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .bot { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 4px solid var(--am-blue); }
+        .user { background: var(--am-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        
+        .source-tag { display: block; font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-transform: uppercase; color: var(--am-light); }
+        .user .source-tag { color: #cbdcf7; }
+
+        /* Suggestions */
+        .suggestions { padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 8px; background: white; border-top: 1px solid #ddd; }
+        .chip { background: var(--am-accent); color: var(--am-blue); padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; border: 1px solid transparent; }
         .chip:hover { background: var(--am-blue); color: white; }
 
-        .input-area { display: flex; padding: 20px; background: white; border-top: 1px solid #ddd; }
-        input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
-        button { background: var(--am-blue); color: white; border: none; padding: 0 20px; margin-left: 10px; border-radius: 5px; cursor: pointer; }
+        /* Input */
+        .input-box { padding: 15px 20px; background: white; display: flex; align-items: center; gap: 10px; border-top: 1px solid #eee; }
+        input { flex: 1; border: 2px solid #eee; padding: 12px; border-radius: 25px; outline: none; transition: border 0.3s; }
+        input:focus { border-color: var(--am-blue); }
+        button { background: var(--am-blue); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        button:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Assistance iPack EPS - Académie d'Aix-Marseille</h1>
-    <p>Votre outil d'aide à la gestion de l'EPS</p>
+    <h1>iPack EPS | Aix-Marseille</h1>
+    <p>Assistance Numérique Pédagogique</p>
 </header>
 
-<div id="chat-container">
-    <div class="message bot">Bonjour collègue. Bienvenue sur l'espace dédié à l'académie d'Aix-Marseille. Comment puis-je vous aider sur iPack EPS aujourd'hui ?</div>
+<div id="chat-window">
+    <div class="msg bot">
+        Bonjour collègue. Je suis votre assistant dédié à l'académie d'Aix-Marseille. 
+        Je peux vous aider sur l'utilisation d'iPack, le CCF, les APPN ou les Sections Sportives.
+        <span class="source-tag">IA Académique</span>
+    </div>
 </div>
 
-<div class="suggestions">
-    <div class="chip" onclick="ask('Comment valider les projets APPN ?')">Validation APPN</div>
-    <div class="chip" onclick="ask('Comment gérer les absences au CCF ?')">Absence CCF</div>
-    <div class="chip" onclick="ask('Déclarer les APSA certifiées')">Déclarer APSA</div>
-    <div class="chip" onclick="ask('Comment créer un protocole adapté ?')">Protocole Adapté</div>
+<div class="suggestions" id="suggestions">
+    <div class="chip" onclick="ask('Comment valider un projet APPN ?')">Validation APPN</div>
+    <div class="chip" onclick="ask('Gérer une absence au CCF')">Absences CCF</div>
+    <div class="chip" onclick="ask('Section Sportive (SSS)')">Sections Sportives</div>
+    <div class="chip" onclick="ask('Identifiants perdus')">Connexion</div>
 </div>
 
-<div class="input-area">
-    <input type="text" id="userInput" placeholder="Posez votre question ici...">
-    <button onclick="handleInput()">Envoyer</button>
+<div class="input-box">
+    <input type="text" id="userInput" placeholder="Posez votre question ici..." onkeypress="if(event.key === 'Enter') handleInput()">
+    <button onclick="handleInput()">></button>
 </div>
 
 <script>
-    // Base de connaissance extraite de vos documents
-    const knowledge = {
-        "appn": "Pour les projets APPN, vous devez soumettre votre dossier selon la circulaire 2017-04-19 via iPack. L'IPR analyse ensuite les mesures de sécurité avant validation.",
-        "absence": "Une absence injustifiée en CCF entraîne la note 'ABS' (zéro). Seuls les élèves avec certificat médical ou cas de force majeure validé par le chef d'établissement peuvent bénéficier d'une épreuve différée.",
-        "apsa": "Dans iPack, allez dans l'onglet 'Examens au CCF' pour déclarer les APSA certifiées et déposer vos référentiels sur Tribu.",
-        "protocole": "Un protocole adapté doit obligatoirement être validé par la CAHN l'année précédant sa mise en œuvre. Il concerne les inaptitudes partielles permanentes.",
-        "default": "Je n'ai pas la réponse précise dans mes documents. Je vous invite à consulter le portail EPS de l'académie d'Aix-Marseille ou à contacter votre coordonnateur."
-    };
+    const chatWindow = document.getElementById('chat-window');
 
-    function ask(question) {
-        document.getElementById('userInput').value = question;
+    // Base de données consolidée (Vos fichiers + Web)
+    const database = [
+        {
+            keywords: ['appn', 'sortie', 'plein air', 'circulaire'],
+            local: "Selon le document 'Accompagnement iPack 2025', le projet APPN doit être déposé sur iPack via le cadre de la circulaire 2017-04-19. L'IPR analyse les mesures de sécurité avant de valider l'ouverture du projet.",
+            web: "Complément Web : N'oubliez pas que le taux d'encadrement spécifique (ex: 2 adultes pour une classe) est une condition sine qua non de validation."
+        },
+        {
+            keywords: ['absence', 'ccf', 'justifiée', 'injustifiée', 'santorin', 'zéro'],
+            local: "FAQ Évaluation : Une absence injustifiée au CCF entraîne la note 'ABS' (zéro sur Santorin). Seuls les cas de force majeure ou certificats médicaux authentifiés permettent une épreuve différée.",
+            web: "Complément Web : Le rattrapage doit être organisé avant la fin du cycle de certification pour être pris en compte dans le calcul de la moyenne annuelle."
+        },
+        {
+            keywords: ['section', 'sportive', 'sss', 'bilan'],
+            local: "Procédures SSS : L'ouverture et le renouvellement des Sections Sportives Scolaires se font désormais exclusivement via iPack avec un dépôt de bilan d'activités annuel.",
+            web: "Aide Web : Les conventions avec les clubs partenaires doivent être téléchargées en format PDF dans l'espace dédié."
+        },
+        {
+            keywords: ['protocole', 'adapté', 'cahn', 'handicap', 'inaptitude'],
+            local: "Règle CAHN : Un protocole adapté doit être validé par la CAHN l'année N-1. Il concerne les inaptitudes partielles permanentes et non les inaptitudes temporaires.",
+            web: "Note Eduscol : Pour les élèves à besoins particuliers, veillez à ce que l'APSA support reste la même, seul l'aménagement des conditions change."
+        },
+        {
+            keywords: ['connexion', 'identifiant', 'perdu', 'accès', 'esterel'],
+            local: "Accès iPack : Utilisez vos identifiants académiques habituels (LDAP).",
+            web: "Aide technique : Si vous changez d'établissement, une mise à jour de vos droits par le guichet unique Pasi peut être nécessaire."
+        }
+    ];
+
+    function ask(txt) {
+        document.getElementById('userInput').value = txt;
         handleInput();
     }
 
     function handleInput() {
         const input = document.getElementById('userInput');
-        const text = input.value.trim().toLowerCase();
-        if (!text) return;
+        const userText = input.value.trim();
+        if(!userText) return;
 
-        addMessage(input.value, 'user');
+        addMessage(userText, 'user');
         input.value = '';
 
+        // Simulation de réflexion
         setTimeout(() => {
-            let response = knowledge.default;
-            if (text.includes('appn')) response = knowledge.appn;
-            else if (text.includes('absence') || text.includes('justifiée')) response = knowledge.absence;
-            else if (text.includes('apsa')) response = knowledge.apsa;
-            else if (text.includes('protocole') || text.includes('adapté')) response = knowledge.protocole;
-
+            const response = searchResponse(userText.toLowerCase());
             addMessage(response, 'bot');
-        }, 500);
+        }, 600);
+    }
+
+    function searchResponse(text) {
+        let found = database.find(item => item.keywords.some(key => text.includes(key)));
+
+        if(found) {
+            return `<b>📁 Procédure Aix-Marseille :</b><br>${found.local}<br><br><b>🌐 Information complémentaire :</b><br>${found.web}<span class="source-tag">Source Mixte (Docs + Web)</span>`;
+        } else {
+            return `Je n'ai pas trouvé de mention spécifique dans vos documents pour cette question. <br><br><b>💡 Conseil :</b> Vérifiez sur le portail EPS académique ou reformulez votre question (ex: "CCF", "APPN", "Accès").<span class="source-tag">Aide Générique</span>`;
+        }
     }
 
     function addMessage(text, side) {
         const div = document.createElement('div');
-        div.className = `message ${side}`;
-        div.innerText = text;
-        document.getElementById('chat-container').appendChild(div);
-        document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
+        div.className = `msg ${side}`;
+        div.innerHTML = text;
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 </script>
 
