@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant iPack EPS</title>
+    <title>Hub IA - EPS Aix-Marseille</title>
     <style>
         :root {
             --am-blue: #002060;
-            /* Un bleu très doux pour le fond de page */
-            --am-soft-bg: #eef2f7; 
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
             padding: 0;
-            /* Dégradé léger pour casser le côté "hôpital" du blanc pur */
+            /* Dégradé bleu doux pour l'arrière-plan */
             background: linear-gradient(180deg, #dae2ed 0%, #f0f4f8 100%);
-            color: #333;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -35,82 +32,82 @@
             z-index: 10;
         }
 
-        .logo-academie {
-            height: 70px;
-            width: auto;
-            background: white;
-            padding: 5px;
-            border-radius: 4px;
-        }
+        .logo-academie { height: 60px; background: white; padding: 5px; border-radius: 4px; }
+        .logo-eps { height: 60px; border-radius: 50%; border: 2px solid white; }
 
-        .logo-eps {
-            height: 65px;
-            width: auto;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
+        .titles { text-align: center; flex-grow: 1; }
+        h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
+        .subtitle { opacity: 0.9; margin: 0; font-size: 0.8rem; }
 
-        header div.titles {
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        h1 { margin: 0; font-size: 1.6rem; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
-        .subtitle { opacity: 0.9; margin: 0; font-size: 0.9rem; font-weight: 300; }
-
-        .container {
-            max-width: 1100px;
-            margin: 0.8rem auto;
-            padding: 8px;
-            /* Fond légèrement bleuté pour le cadre */
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(5px); /* Effet verre dépoli */
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,32,96,0.1);
+        /* Grille pour les deux assistants */
+        .hub-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 1500px;
+            margin: 1rem auto;
+            padding: 0 1rem;
             flex: 1;
+            width: 96%;
+        }
+
+        .bot-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
-            width: 95%;
             border: 1px solid rgba(255,255,255,0.8);
-        }
-
-        .chat-section {
-            flex: 1;
-            border: none;
-            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0,32,96,0.08);
             overflow: hidden;
-            background: white;
         }
 
-        footer {
+        .bot-header {
+            padding: 0.8rem;
             text-align: center;
-            padding: 0.6rem;
-            font-size: 0.8rem;
-            color: #5d6d7e;
-            font-weight: 500;
+            background: rgba(0, 32, 96, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            color: var(--am-blue);
+            font-size: 1rem;
+        }
+
+        .chat-section { flex: 1; background: white; }
+
+        footer { text-align: center; padding: 0.5rem; font-size: 0.75rem; color: #5d6d7e; font-weight: 500; }
+
+        /* Adaptation pour les tablettes et mobiles */
+        @media (max-width: 1000px) {
+            .hub-container { grid-template-columns: 1fr; overflow-y: auto; }
+            .bot-card { height: 600px; margin-bottom: 1rem; }
+            body { overflow-y: auto; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="logo%20AM.png" alt="Académie d'Aix-Marseille" class="logo-academie">
+        <img src="logo%20AM.png" alt="Logo Académie" class="logo-academie">
         <div class="titles">
-            <h1>Assistant iPack EPS</h1>
-            <p class="subtitle">Rectorat d'Aix-Marseille</p>
+            <h1>Hub IA - EPS Aix-Marseille</h1>
+            <p class="subtitle">Espace Ressources & Assistance Numérique</p>
         </div>
         <img src="capture_decran_2025-09-08_191648.png" alt="Logo EPS" class="logo-eps">
     </header>
 
-    <div class="container">
-        <div class="chat-section">
-            <iframe
-                src="https://www.chatbase.co/chatbot-iframe/lkAOJJxel7o6BllVD3_Xo"
-                width="100%"
-                height="100%"
-                frameborder="0"
-                allow="microphone"
-            ></iframe>
+    <div class="hub-container">
+        <div class="bot-card">
+            <div class="bot-header">🤖 Assistant Expert iPack EPS</div>
+            <div class="chat-section">
+                <iframe src="https://www.chatbase.co/chatbot-iframe/lkAOJJxel7o6BllVD3_Xo" width="100%" height="100%" frameborder="0"></iframe>
+            </div>
+        </div>
+
+        <div class="bot-card">
+            <div class="bot-header">🔍 Recherche Ressources & Site EPS</div>
+            <div class="chat-section">
+                <iframe src="https://www.chatbase.co/chatbot-iframe/tyjEBBB5KG288uWCa2gEI" width="100%" height="100%" frameborder="0"></iframe>
+            </div>
         </div>
     </div>
 
