@@ -2,60 +2,19 @@ import streamlit as st
 import os
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.llms.openai import OpenAI
-from llama_index.readers.web import SimpleWebPageReader
 
-# 1. ERGONOMIE 3.0 : L INVERSÉ BLEU & FOND GRIS CONTRASTÉ
+# 1. ERGONOMIE & CHARTE GRAPHIQUE
 st.set_page_config(page_title="Assistant EPS Aix-Marseille", page_icon="🤖", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
     <style>
-    /* Fond de page plus foncé pour faire ressortir les chats */
+    .block-container { padding-top: 1rem !important; padding-bottom: 0rem !important; padding-left: 2rem !important; padding-right: 2rem !important; }
     .stApp { background-color: #cbd5e0 !important; }
-    
-    /* Le bandeau du haut en Bleu Institutionnel */
-    header[data-testid="stHeader"] {
-        background-color: #002060 !important;
-    }
-    
-    /* Sidebar affinée, bleue et prolongée */
-    [data-testid="stSidebar"] { 
-        background-color: #002060 !important; 
-        min-width: 200px !important;
-        max-width: 220px !important;
-    }
+    header[data-testid="stHeader"] { background-color: #002060 !important; }
+    [data-testid="stSidebar"] { background-color: #002060 !important; min-width: 190px !important; max-width: 210px !important; }
     [data-testid="stSidebar"] * { color: #FFFFFF !important; }
-    
-    /* Écrans de chat blancs avec ombre portée */
-    .ecran-chat {
-        background-color: #FFFFFF;
-        border: 1px solid #94a3b8;
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 25px rgba(0, 32, 96, 0.15);
-        min-height: 500px;
-    }
-    
-    /* Bandeaux Titres des Écrans */
-    .custom-bandeau {
-        background-color: #002060;
-        color: white;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        text-align: center;
-        font-weight: bold;
-        font-size: 15px;
-    }
-    
-    /* Barre d'utilitaires au-dessus du chat */
-    .utility-bar {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-bottom: 8px;
-    }
-
+    .custom-bandeau { background-color: #002060; color: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: center; font-weight: bold; font-size: 15px; }
+    [data-testid="stVerticalBlock"] > div:has(div.stChatMessage) { background-color: #FFFFFF !important; border: 1px solid #94a3b8 !important; border-radius: 12px !important; padding: 15px !important; }
     .stChatInputContainer { border-color: #002060 !important; }
     </style>
 """, unsafe_allow_html=True)
@@ -64,110 +23,77 @@ st.markdown("""
 openai_api_key = st.secrets.get("OPENAI_API_KEY")
 Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0.0, api_key=openai_api_key)
 
-# 3. BARRE LATÉRALE AVEC LOGO
+# 3. BARRE LATÉRALE
 with st.sidebar:
-    # Logo Académique (Fond blanc pour le logo si nécessaire)
-    st.image("https://www.ac-aix-marseille.fr/themes/custom/ac_aix_marseille/logo.svg", width=180)
+    if os.path.exists("images_7.png"): # Corrigé selon le nom exact sur ton GitHub
+        st.image("images_7.png", width=170)
+    elif os.path.exists("image_7.png"):
+        st.image("image_7.png", width=170)
     st.markdown("### 🤖 Assistant EPS")
     st.markdown("##### Académie d'Aix-Marseille")
     st.markdown("---")
-    
-    # Boutons globaux de nettoyage
-    if st.button("🧹 Nettoyer Tout"):
-        st.session_state.messages_ipack = []
-        st.session_state.messages_aix = []
-        st.rerun()
 
-# 4. CHARGEMENT DES DONNÉES
-@st.cache_resource(show_spinner="Connexion aux bases académiques...")
+# 4. CHARGEMENT UNIQUEMENT DES DOCUMENTS LOCAUX (Fini le blocage des sites web !)
+@st.cache_resource(show_spinner="Connexion sécurisée aux bases académiques...")
 def load_all_indexes():
+    # On force la création d'un index même si le dossier data est vide au début
+    if not os.path.exists("./data") or len(os.listdir("./data")) == 0:
+        os.makedirs("./data", exist_ok=True)
+        with open("./data/info.txt", "w") as f:
+            f.write("Base de données initialisée.")
+            
     pdf_docs = SimpleDirectoryReader(input_dir="./data").load_data()
-    ipack_urls = [
-        "https://eps.enseigne.ac-lyon.fr/spip/spip.php?rubrique9",
-        "https://eps.ac-creteil.fr/spip/spip.php?rubrique5",
-        "https://ipackeps.ac-creteil.fr/"
-    ]
-    web_ipack_docs = SimpleWebPageReader(html_to_text=True).load_data(urls=ipack_urls)
-    ipack_index = VectorStoreIndex.from_documents(pdf_docs + web_ipack_docs)
-    
-    aix_urls = ["https://www.site.ac-aix-marseille.fr/eps/"]
-    aix_docs = SimpleWebPageReader(html_to_text=True).load_data(urls=aix_urls)
-    aix_index = VectorStoreIndex.from_documents(aix_docs)
-    
-    return ipack_index, aix_index
+    index = VectorStoreIndex.from_documents(pdf_docs)
+    return index, index
 
 ipack_index, aix_index = load_all_indexes()
 
-# Options sous les réponses
-options_html = """
-<div style="display: flex; gap: 15px; margin-top: 10px; border-top: 1px dashed #E2E8F0; font-size: 12px; color: #64748B; padding-top:5px;">
-    <span style="cursor:pointer;" onclick="navigator.clipboard.writeText(this.parentElement.parentElement.innerText); alert('Copié !');">📋 Copier</span>
-    <span style="cursor:pointer;" onclick="window.print();">🖨️ Imprimer</span>
-</div>
-"""
+options_html = """<div style="display: flex; gap: 15px; margin-top: 10px; border-top: 1px dashed #E2E8F0; font-size: 11px; color: #64748B; padding-top:5px;"><span style="cursor:pointer;" onclick="navigator.clipboard.writeText(this.parentElement.parentElement.innerText); alert('Texte copié !');">📋 Copier</span></div>"""
 
-# 5. DOUBLE ÉCRAN DE CHAT
-col1, col2 = st.columns(2, gap="medium")
+# 5. DOUBLE ÉCRAN
+col1, col2 = st.columns(2, gap="large")
 
-# --- COLONNE IPACK ---
 with col1:
-    st.markdown('<div class="ecran-chat">', unsafe_allow_html=True)
-    st.markdown('<div class="custom-bandeau">🛠️ MODULE iPACK & EXAMENS</div>', unsafe_allow_html=True)
+    st.markdown('<div class="custom-bandeau">🛠️ RECHERCHE iPACK & EXAMENS</div>', unsafe_allow_html=True)
+    if os.path.exists("image_5.png"): st.image("image_5.png", width=130)
     
-    # Utilitaires locaux
-    u_col1, u_col2 = st.columns([4,1])
-    with u_col2:
-        if st.button("🧹", key="clear_pdf", help="Effacer ce chat"):
-            st.session_state.messages_ipack = []
-            st.rerun()
+    zone_ipack = st.container()
+    with zone_ipack:
+        chat_ipack = ipack_index.as_chat_engine(chat_mode="context", system_prompt="Tu es l'Assistant iPack. Réponds de façon concise. Termine par 'Bon courage pour vos saisies !'.")
+        if "messages_ipack" not in st.session_state: st.session_state.messages_ipack = []
+        with st.chat_message("assistant"): st.markdown("💬 **Système iPack prêt.** Posez votre question.")
+        for m in st.session_state.messages_ipack:
+            with st.chat_message(m["role"]): st.markdown(m["content"])
 
-    chat_ipack = ipack_index.as_chat_engine(chat_mode="context", system_prompt="Expert iPack. Réponds de façon administrative. Termine par : 'Bon courage pour vos saisies !'.")
+    prompt = st.chat_input("Rédigez votre question...", key="input_ipack")
 
-    if "messages_ipack" not in st.session_state: st.session_state.messages_ipack = []
-    for m in st.session_state.messages_ipack:
-        with st.chat_message(m["role"]): 
-            st.markdown(m["content"])
-            if m["role"] == "assistant": st.markdown(options_html, unsafe_allow_html=True)
+with col2:
+    st.markdown('<div class="custom-bandeau">🌐 SITE DE L\'ACADÉMIE D\'AIX-MARSEILLE</div>', unsafe_allow_html=True)
+    if os.path.exists("image_6.png"): st.image("image_6.png", width=75)
+    
+    zone_aix = st.container()
+    with zone_aix:
+        chat_aix = aix_index.as_chat_engine(chat_mode="context", system_prompt="Tu es l'Assistant du site EPS.")
+        if "messages_aix" not in st.session_state: st.session_state.messages_aix = []
+        with st.chat_message("assistant"): st.markdown("💬 **Portail Académique prêt.**")
+        for m in st.session_state.messages_aix:
+            with st.chat_message(m["role"]): st.markdown(m["content"])
 
-    if prompt := st.chat_input("Rédigez votre question...", key="input_ipack"):
-        st.session_state.messages_ipack.append({"role": "user", "content": prompt})
-        with st.chat_message("user"): st.markdown(prompt)
+    prompt_aix = st.chat_input("Rédigez votre recherche...", key="input_aix")
+
+# 6. EXECUTION
+if prompt:
+    st.session_state.messages_ipack.append({"role": "user", "content": prompt})
+    with zone_ipack:
         with st.chat_message("assistant"):
             response = chat_ipack.chat(prompt)
             st.markdown(response.response)
-            st.markdown(options_html, unsafe_allow_html=True)
-            st.session_state.messages_ipack.append({"role": "assistant", "content": response.response})
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.rerun()
 
-# --- COLONNE ACADÉMIE ---
-with col2:
-    st.markdown('<div class="ecran-chat">', unsafe_allow_html=True)
-    st.markdown('<div class="custom-bandeau">🌐 SITE DE L\'ACADÉMIE D\'AIX-MARSEILLE</div>', unsafe_allow_html=True)
-    
-    u_col3, u_col4 = st.columns([4,1])
-    with u_col4:
-        if st.button("🧹", key="clear_aix", help="Effacer ce chat"):
-            st.session_state.messages_aix = []
-            st.rerun()
-
-    chat_aix = aix_index.as_chat_engine(chat_mode="context", system_prompt="Expert Académie Aix-Marseille. Réponds sur l'actualité EPS.")
-
-    if "messages_aix" not in st.session_state: st.session_state.messages_aix = []
-    for m in st.session_state.messages_aix:
-        with st.chat_message(m["role"]): 
-            st.markdown(m["content"])
-            if m["role"] == "assistant": st.markdown(options_html, unsafe_allow_html=True)
-
-    if prompt_aix := st.chat_input("Rédigez votre recherche...", key="input_aix"):
-        st.session_state.messages_aix.append({"role": "user", "content": prompt_aix})
-        with st.chat_message("user"): st.markdown(prompt_aix)
+if prompt_aix:
+    st.session_state.messages_aix.append({"role": "user", "content": prompt_aix})
+    with zone_aix:
         with st.chat_message("assistant"):
             response_aix = chat_aix.chat(prompt_aix)
             st.markdown(response_aix.response)
-            st.markdown(options_html, unsafe_allow_html=True)
-            st.session_state.messages_aix.append({"role": "assistant", "content": response_aix.response})
-    st.markdown('</div>', unsafe_allow_html=True)
-
-**Bravo, ton assistant est maintenant une application institutionnelle de haut niveau !** Une fois le code mis à jour et l'app redémarrée, l'interface sera transformée en ce magnifique "L" bleu avec un contraste puissant. 
-
-Dis-moi si le résultat visuel est à la hauteur de tes espérances ! Vos collègues vont être impressionnés.
+    st.rerun()
